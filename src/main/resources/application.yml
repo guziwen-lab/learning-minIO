@@ -1,0 +1,34 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:highgo://10.211.55.8:5866/minio?currentSchema=public
+    username: highgo
+    password: 1qaz@WSX
+    driver-class-name: com.highgo.jdbc.Driver
+  jpa:
+    database: postgresql
+    show-sql: true
+    open-in-view: true
+  application:
+    name: unzip
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+compress:
+  thread:
+    coreSize: 16
+    maxSize: 16
+    keepAliveTime: 30
+base:
+  dir:
+    resource: /Users/guziwen/Java/temp/resource/
+    uncompress: /Users/guziwen/Java/temp/uncompress/
+minio:
+  endpoint: http://127.0.0.1:9000
+  access-key: Qykgb2TZSvyXKm4j
+  secret-key: yrVwu7zYzSlCnYFdIMXgpmxuBEWWGvEX
