@@ -96,7 +96,7 @@ public class MinioDecompressUtil {
      */
     private void uploadToMinIO(String targetObjectPath, ZipInputStream zipFile, ZipEntry entry, long totalSize)
             throws IOException {
-        // 文件过大分片上传到minio
+        // 文件过大防止内存溢出，分片上传到minio
         if (totalSize > MAX_COMPRESS_FILE_THRESHOLD_COUNT) {
             List<MinIOComposeDTO> sources = new ArrayList<>();
 
