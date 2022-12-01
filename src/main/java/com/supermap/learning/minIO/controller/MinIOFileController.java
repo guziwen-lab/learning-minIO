@@ -31,7 +31,7 @@ public class MinIOFileController {
      *
      * @param file file
      */
-    @PostMapping("upload")
+    @PostMapping("upload/file")
     public R<Boolean> upload(MultipartFile file) throws IOException {
         Boolean upload = minIOFileService.upload(file);
         return R.ok(upload);
@@ -45,9 +45,9 @@ public class MinIOFileController {
      * @param md5        md5
      * @param file       file
      */
-    @PostMapping("upload/{bucket}")
-    public R<Boolean> upload(@PathVariable String bucket, @RequestParam String objectName,
-                             @RequestParam String md5, MultipartFile file) throws IOException {
+    @PostMapping("upload/{bucket}/{objectName}/{md5}")
+    public R<Boolean> upload(@PathVariable String bucket, @PathVariable String objectName,
+                             @PathVariable String md5, MultipartFile file) throws IOException {
         Boolean upload = minIOFileService.upload(bucket, objectName, md5, file);
         return R.ok(upload);
     }

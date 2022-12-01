@@ -12,7 +12,6 @@ import io.minio.messages.Item;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-@Configuration
 @EnableConfigurationProperties({MinIOConfigurationProperties.class})
 public class MinIOTemplate {
 

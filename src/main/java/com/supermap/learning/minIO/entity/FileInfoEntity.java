@@ -53,5 +53,10 @@ public class FileInfoEntity {
      */
     private Date updateTime;
 
+    /**
+     * 租户id
+     */
+    private Long tenant_Id;
+
 }
 

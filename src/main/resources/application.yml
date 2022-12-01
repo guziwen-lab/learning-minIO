@@ -2,7 +2,7 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:highgo://10.211.55.8:5866/minio?currentSchema=public
+    url: jdbc:highgo://10.211.55.4:5866/minio?currentSchema=public
     username: highgo
     password: 1qaz@WSX
     driver-class-name: com.highgo.jdbc.Driver
@@ -11,7 +11,7 @@ spring:
     show-sql: true
     open-in-view: true
   application:
-    name: unzip
+    name: learning-minIO
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8

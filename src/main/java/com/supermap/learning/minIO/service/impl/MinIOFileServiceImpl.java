@@ -64,6 +64,7 @@ public class MinIOFileServiceImpl implements MinIOFileService {
     private static final Map<Long, DecompressProgressBarBO> minioStateList = new HashMap<>();
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public Boolean upload(MultipartFile file) throws IOException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String date = simpleDateFormat.format(new Date());
@@ -77,6 +78,8 @@ public class MinIOFileServiceImpl implements MinIOFileService {
         fileInfoEntity.setObjectName(fileName);
         fileInfoEntity.setPath(path);
         fileInfoEntity.setFileName(file.getOriginalFilename());
+        fileInfoEntity.setCreateTime(new Date());
+        fileInfoEntity.setUpdateTime(new Date());
         fileInfoService.save(fileInfoEntity);
 
         minIOTemplate.uploadObject(MinIOBucketConstant.TEST, fileName, file.getInputStream());
