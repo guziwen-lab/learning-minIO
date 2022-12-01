@@ -126,7 +126,7 @@ public class MinioDecompressUtil {
             }
             ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
             minIOTemplate.uploadObject(MinIOBucketConstant.DECOMPRESS_BUCKET,
-                    targetObjectPath + entry.getName(), bis);
+                    targetObjectPath + entry.getName(), bis, bos.size());
         }
     }
 
@@ -144,7 +144,7 @@ public class MinioDecompressUtil {
         String chunkName = targetObjectPath + UUIDUtil.get();
 
         ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-        minIOTemplate.uploadObject(MinIOBucketConstant.CHUNK_BUCKET, chunkName, bis);
+        minIOTemplate.uploadObject(MinIOBucketConstant.CHUNK_BUCKET, chunkName, bis, bos.size());
 
         MinIOComposeDTO minIOComposeDTO = new MinIOComposeDTO()
                 .setBucket(MinIOBucketConstant.CHUNK_BUCKET)

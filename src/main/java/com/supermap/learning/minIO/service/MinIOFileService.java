@@ -5,6 +5,7 @@ import com.supermap.learning.minIO.dto.MinIOComposeDTO;
 import com.supermap.learning.minIO.dto.UploadUrlDTO;
 import com.supermap.learning.minIO.vo.FileStateVO;
 import com.supermap.learning.minIO.vo.UploadUrlVO;
+import io.minio.StatObjectResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,6 +17,8 @@ import java.util.concurrent.ExecutionException;
  * @author lty
  */
 public interface MinIOFileService {
+
+    StatObjectResponse getStat(String bucketName, String objectName);
 
     Boolean upload(MultipartFile uploadFile) throws IOException;
 

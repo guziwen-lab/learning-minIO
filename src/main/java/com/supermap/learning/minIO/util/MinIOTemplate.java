@@ -99,7 +99,25 @@ public class MinIOTemplate {
         return minioClient.putObject(PutObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
-                .stream(inputStream, inputStream.available(), -1)
+                .stream(inputStream, -1, 10485760)
+                .build());
+    }
+
+    /**
+     * 文件上传
+     *
+     * @param bucketName  bucket名称
+     * @param objectName  对象名称，文件名称
+     * @param inputStream 文件输入流
+     * @param objectSize  文件大小
+     */
+    @SneakyThrows
+    public ObjectWriteResponse uploadObject(String bucketName, String objectName, InputStream inputStream, long objectSize) {
+        makeBucket(bucketName);
+        return minioClient.putObject(PutObjectArgs.builder()
+                .bucket(bucketName)
+                .object(objectName)
+                .stream(inputStream, objectSize, -1)
                 .build());
     }
 

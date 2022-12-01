@@ -7,6 +7,8 @@ import com.supermap.learning.minIO.service.MinIOFileService;
 import com.supermap.learning.minIO.vo.FileStateVO;
 import com.supermap.learning.minIO.vo.UploadUrlVO;
 import com.supermap.learning.minIO.common.Response.R;
+import io.minio.StatObjectResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +23,7 @@ import java.util.concurrent.ExecutionException;
  */
 @RestController
 @RequestMapping("minio")
+@Slf4j
 public class MinIOFileController {
 
     @Autowired
@@ -45,10 +48,16 @@ public class MinIOFileController {
      * @param md5        md5
      * @param file       file
      */
-    @PostMapping("upload/{bucket}/{objectName}/{md5}")
-    public R<Boolean> upload(@PathVariable String bucket, @PathVariable String objectName,
-                             @PathVariable String md5, MultipartFile file) throws IOException {
+    @PostMapping("upload/file/bucket/objectName/md5")
+    public R<Boolean> upload(@RequestParam String bucket, @RequestParam String objectName,
+                             @RequestParam(required = false) String md5, MultipartFile file) throws IOException {
+        long startTime = System.currentTimeMillis();
         Boolean upload = minIOFileService.upload(bucket, objectName, md5, file);
+        long endTime = System.currentTimeMillis();
+        double fileSize = file.getSize() * 1d / 1024 / 1024;
+        double time = (endTime - startTime) / 1000d;
+        double rate = fileSize / time;
+        log.info("文件大小:{}MB, 上传时间: {}s, 速率: {}MB/s", fileSize, time, rate);
         return R.ok(upload);
     }
 
@@ -58,9 +67,19 @@ public class MinIOFileController {
      * @param bucket   桶名称
      * @param fileName 对象名称
      */
-    @GetMapping("download")
-    public R<Void> download(String bucket, String fileName, HttpServletResponse response) throws IOException {
+    @GetMapping("download/file")
+    public R<Void> download(@RequestParam String bucket, @RequestParam String fileName,
+                            HttpServletResponse response) throws IOException {
+        long startTime = System.currentTimeMillis();
         minIOFileService.download(bucket, fileName, response);
+        long endTime = System.currentTimeMillis();
+
+        StatObjectResponse stat = minIOFileService.getStat(bucket, fileName);
+        double fileSize = stat.size() * 1d / 1024 / 1024;
+        double time = (endTime - startTime) / 1000d;
+        double rate = fileSize / time;
+        log.info("文件大小:{}MB, 下载时间: {}s, 速率: {}MB/s", fileSize, time, rate);
+
         return R.ok();
     }
 
@@ -71,7 +90,7 @@ public class MinIOFileController {
      * @param objectName 对象名称
      */
     @GetMapping("download/url")
-    public R<String> getDownloadUrl(String bucket, String objectName) {
+    public R<String> getDownloadUrl(@RequestParam String bucket, @RequestParam String objectName) {
         String url = minIOFileService.getUrl(bucket, objectName);
         return R.ok(url);
     }
@@ -84,7 +103,7 @@ public class MinIOFileController {
      * @return UploadUrlVO
      */
     @GetMapping("upload/url")
-    public R<UploadUrlVO> getUploadUrl(String bucket, String objectName) {
+    public R<UploadUrlVO> getUploadUrl(@RequestParam String bucket, @RequestParam String objectName) {
         return R.ok(minIOFileService.getPresignedPostFormData(bucket, objectName));
     }
 
@@ -121,7 +140,7 @@ public class MinIOFileController {
      * @param uploadUrlDTO uploadUrlDTO
      * @return UploadUrlVO
      */
-    @PostMapping("upload/url")
+    @PostMapping("batch/upload/url")
     public R<List<UploadUrlVO>> getUploadUrl(@RequestBody UploadUrlDTO uploadUrlDTO) {
         return R.ok(minIOFileService.getPresignedPostFormData(uploadUrlDTO));
     }
@@ -155,7 +174,14 @@ public class MinIOFileController {
      */
     @GetMapping("decompress")
     public R<Long> decompress(@RequestParam Long compressFileId) throws ExecutionException, InterruptedException {
+        long startTime = System.currentTimeMillis();
+
         Long fileId = minIOFileService.decompress(compressFileId);
+
+        long endTime = System.currentTimeMillis();
+        double time = (endTime - startTime) / 1000d;
+        log.info("解压时间: {}s", time);
+
         return R.ok(fileId);
     }
 

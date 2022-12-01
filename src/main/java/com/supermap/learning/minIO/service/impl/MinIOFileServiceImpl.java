@@ -64,6 +64,11 @@ public class MinIOFileServiceImpl implements MinIOFileService {
     private static final Map<Long, DecompressProgressBarBO> minioStateList = new HashMap<>();
 
     @Override
+    public StatObjectResponse getStat(String bucketName, String objectName) {
+        return minIOTemplate.getStat(bucketName, objectName);
+    }
+
+    @Override
     @Transactional(rollbackFor = Throwable.class)
     public Boolean upload(MultipartFile file) throws IOException {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -72,21 +77,14 @@ public class MinIOFileServiceImpl implements MinIOFileService {
         String path = date.concat("/").concat(UUID.randomUUID().toString()).concat("/");
         String fileName = path.concat(Objects.requireNonNull(file.getOriginalFilename()));
 
-        FileInfoEntity fileInfoEntity = new FileInfoEntity();
-        fileInfoEntity.setId(SnowflakeIdWorker.getInstance().nextId());
-        fileInfoEntity.setBucket(MinIOBucketConstant.TEST);
-        fileInfoEntity.setObjectName(fileName);
-        fileInfoEntity.setPath(path);
-        fileInfoEntity.setFileName(file.getOriginalFilename());
-        fileInfoEntity.setCreateTime(new Date());
-        fileInfoEntity.setUpdateTime(new Date());
-        fileInfoService.save(fileInfoEntity);
+        fileInfoService.save(MinIOBucketConstant.TEST, fileName, null, fileName, path);
 
-        minIOTemplate.uploadObject(MinIOBucketConstant.TEST, fileName, file.getInputStream());
+        minIOTemplate.uploadObject(MinIOBucketConstant.TEST, fileName, file.getInputStream(), file.getSize());
         return true;
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public Boolean upload(String bucket, String objectName, String md5, MultipartFile file) throws IOException {
         String[] split = objectName.split("/");
         String fileName = split[split.length - 1];
@@ -96,18 +94,9 @@ public class MinIOFileServiceImpl implements MinIOFileService {
         }
         path.append("/");
 
-        FileInfoEntity fileInfoEntity = new FileInfoEntity()
-                .setId(SnowflakeIdWorker.getInstance().nextId())
-                .setBucket(bucket)
-                .setObjectName(objectName)
-                .setPath(path.toString())
-                .setFileName(fileName)
-                .setMd5(md5)
-                .setCreateTime(new Date())
-                .setUpdateTime(new Date());
-        fileInfoService.save(fileInfoEntity);
+        fileInfoService.save(bucket, objectName, md5, fileName, path.toString());
 
-        minIOTemplate.uploadObject(bucket, objectName, file.getInputStream());
+        minIOTemplate.uploadObject(bucket, objectName, file.getInputStream(), file.getSize());
         return true;
     }
 
@@ -176,6 +165,8 @@ public class MinIOFileServiceImpl implements MinIOFileService {
         UploadUrlVO uploadUrlVO = new UploadUrlVO();
 
         Map<String, String> presignedPostFormData = minIOTemplate.getPresignedPostFormData(bucket, objectName);
+        presignedPostFormData.put("Content-Type", "*/*");
+        presignedPostFormData.put("key", objectName);
         uploadUrlVO.setFormData(presignedPostFormData);
 
         String endpoint = minIOConfigurationProperties.getEndpoint();
@@ -250,16 +241,8 @@ public class MinIOFileServiceImpl implements MinIOFileService {
 
         // 合成文件
         minIOTemplate.composeObject(sources, MinIOBucketConstant.COMPOSE_BUCKET, fileStateBO.getObjectName());
-        FileInfoEntity fileInfoEntity = new FileInfoEntity()
-                .setId(SnowflakeIdWorker.getInstance().nextId())
-                .setBucket(MinIOBucketConstant.COMPOSE_BUCKET)
-                .setObjectName(fileStateBO.getObjectName())
-                .setPath(fileStateBO.getPath())
-                .setFileName(fileStateBO.getFileName())
-                .setMd5(md5)
-                .setCreateTime(new Date())
-                .setUpdateTime(new Date());
-        fileInfoService.save(fileInfoEntity);
+        fileInfoService.save(MinIOBucketConstant.COMPOSE_BUCKET, fileStateBO.getObjectName(), md5,
+                fileStateBO.getFileName(), fileStateBO.getPath());
 
         // 删除分片文件
         minIOTemplate.removeDir(MinIOBucketConstant.CHUNK_BUCKET, path);

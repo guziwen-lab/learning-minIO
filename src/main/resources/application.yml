@@ -10,6 +10,9 @@ spring:
     database: postgresql
     show-sql: true
     open-in-view: true
+    properties:
+      hibernate:
+        format_sql: true
   application:
     name: learning-minIO
   jackson:
@@ -17,8 +20,11 @@ spring:
     time-zone: GMT+8
   servlet:
     multipart:
-      max-file-size: 1024MB
-      max-request-size: 1024MB
+      max-file-size: 102400MB
+      max-request-size: 1024000MB
+logging:
+  level:
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
 compress:
   thread:
     coreSize: 16
@@ -29,6 +35,9 @@ base:
     resource: /Users/guziwen/Java/temp/resource/
     uncompress: /Users/guziwen/Java/temp/uncompress/
 minio:
-  endpoint: http://127.0.0.1:9000
-  access-key: Qykgb2TZSvyXKm4j
-  secret-key: yrVwu7zYzSlCnYFdIMXgpmxuBEWWGvEX
+#  endpoint: http://127.0.0.1:9000
+#  access-key: Qykgb2TZSvyXKm4j
+#  secret-key: yrVwu7zYzSlCnYFdIMXgpmxuBEWWGvEX
+  endpoint: http://192.168.221.22:9000
+  access-key: 12345678
+  secret-key: 12345678

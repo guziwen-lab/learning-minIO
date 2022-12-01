@@ -15,16 +15,16 @@ public class MinIOBucketConstant {
     /**
      * 分片桶
      */
-    public static final String CHUNK_BUCKET = "chunk-bucket";
+    public static final String CHUNK_BUCKET = "chunk";
 
     /**
      * 合成桶
      */
-    public static final String COMPOSE_BUCKET = "compose-bucket";
+    public static final String COMPOSE_BUCKET = "compose";
 
     /**
      * 解压桶
      */
-    public static final String DECOMPRESS_BUCKET = "decompress-bucket";
+    public static final String DECOMPRESS_BUCKET = "decompress";
 
 }
