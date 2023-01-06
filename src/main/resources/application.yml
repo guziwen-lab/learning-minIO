@@ -2,7 +2,7 @@ server:
   port: 8080
 spring:
   datasource:
-    url: jdbc:highgo://10.211.55.4:5866/minio?currentSchema=public
+    url: jdbc:highgo://10.211.55.4:5866/zrzydjk?currentSchema=public
     username: highgo
     password: 1qaz@WSX
     driver-class-name: com.highgo.jdbc.Driver
@@ -35,9 +35,9 @@ base:
     resource: /Users/guziwen/Java/temp/resource/
     uncompress: /Users/guziwen/Java/temp/uncompress/
 minio:
-#  endpoint: http://127.0.0.1:9000
-#  access-key: Qykgb2TZSvyXKm4j
-#  secret-key: yrVwu7zYzSlCnYFdIMXgpmxuBEWWGvEX
-  endpoint: http://192.168.221.22:9000
-  access-key: 12345678
-  secret-key: 12345678
+  endpoint: http://127.0.0.1:9000
+  access-key: Qykgb2TZSvyXKm4j
+  secret-key: yrVwu7zYzSlCnYFdIMXgpmxuBEWWGvEX
+#  endpoint: http://192.168.221.22:9000
+#  access-key: 12345678
+#  secret-key: 12345678

@@ -1,6 +1,7 @@
 package com.supermap.learning.minIO.util;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.CharUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -217,6 +218,29 @@ public class FileUtil {
             postfix = s[s.length - 1];
         }
         return postfix;
+    }
+
+    public static String getFileName(String filePath) {
+        String[] s = filePath.split("/");
+        String fileName = filePath;
+        if (s.length > 1) {
+            fileName = s[s.length - 1];
+        }
+        return fileName;
+    }
+
+    public static String getFilePath(String filePath) {
+        String[] s = filePath.split("/");
+        StringBuilder path = new StringBuilder();
+        if (s.length > 1) {
+            for (int i = 0; i < s.length - 1; i++) {
+                path.append(s[i]);
+                if (i != s.length - 2) {
+                    path.append("/");
+                }
+            }
+        }
+        return path.toString();
     }
 
 }

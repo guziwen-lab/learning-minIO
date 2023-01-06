@@ -45,14 +45,14 @@ public class MinioDecompressUtil {
     @SneakyThrows
     public Long decompress(String srcBucket, String srcObjectName, String targetObjectPath,
                            DecompressProgressBarBO decompressProgressBarBO) {
-        StatObjectResponse stat = minIOTemplate.getStat(srcBucket, srcObjectName);
+        StatObjectResponse srcFileStat = minIOTemplate.getStat(srcBucket, srcObjectName);
         // 判断源文件是否存在
-        if (stat == null) {
+        if (srcFileStat == null) {
             throw new RuntimeException("文件不存在，bucket：" + srcBucket + "，objectName：" + srcObjectName);
         }
 
         decompressProgressBarBO.setStartTime(new Date());
-        decompressProgressBarBO.setTotal(stat.size());
+        decompressProgressBarBO.setTotal(srcFileStat.size());
 
         try (InputStream in = minIOTemplate.downloadObject(srcBucket, srcObjectName)) {
             try (ZipInputStream zipFile = new ZipInputStream(in)) {
@@ -62,7 +62,7 @@ public class MinioDecompressUtil {
                         continue;
                     }
 
-                    uploadToMinIO(targetObjectPath, zipFile, entry, stat.size());
+                    uploadToMinIO(targetObjectPath, zipFile, entry, srcFileStat.size());
 
                     decompressProgressBarBO.getDecompressedFiles().add(entry.getName());
                     decompressProgressBarBO.setRead(decompressProgressBarBO.getRead() + entry.getCompressedSize());

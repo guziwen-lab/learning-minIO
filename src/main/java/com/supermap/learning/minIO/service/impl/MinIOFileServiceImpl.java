@@ -10,10 +10,7 @@ import com.supermap.learning.minIO.dto.UploadUrlDTO;
 import com.supermap.learning.minIO.entity.FileInfoEntity;
 import com.supermap.learning.minIO.service.FileInfoService;
 import com.supermap.learning.minIO.service.MinIOFileService;
-import com.supermap.learning.minIO.util.MinIOTemplate;
-import com.supermap.learning.minIO.util.MinioDecompressUtil;
-import com.supermap.learning.minIO.util.SnowflakeIdWorker;
-import com.supermap.learning.minIO.util.UUIDUtil;
+import com.supermap.learning.minIO.util.*;
 import com.supermap.learning.minIO.vo.FileStateVO;
 import com.supermap.learning.minIO.vo.UploadUrlVO;
 import com.supermap.learning.minIO.common.constant.MinIOBucketConstant;
@@ -172,6 +169,9 @@ public class MinIOFileServiceImpl implements MinIOFileService {
         String endpoint = minIOConfigurationProperties.getEndpoint();
         String url = endpoint.concat("/").concat(bucket);
         uploadUrlVO.setUrl(url);
+
+        fileInfoService.save(bucket, objectName, null,
+                FileUtil.getFileName(objectName), FileUtil.getFilePath(objectName));
 
         return uploadUrlVO;
     }
