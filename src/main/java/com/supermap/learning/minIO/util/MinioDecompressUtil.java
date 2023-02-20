@@ -9,7 +9,6 @@ import io.minio.ObjectWriteArgs;
 import io.minio.StatObjectResponse;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -107,7 +106,7 @@ public class MinioDecompressUtil {
             while ((len = zipFile.read(buff)) != -1) {
                 bos.write(buff, 0, len);
                 if (bos.size() > ObjectWriteArgs.MIN_MULTIPART_SIZE) {
-                    bos = uploadMultipart(targetObjectPath, sources, bos);
+                    uploadMultipart(targetObjectPath, sources, bos);
                 }
             }
             // 把剩余的流上传
@@ -136,11 +135,9 @@ public class MinioDecompressUtil {
      * @param targetObjectPath 对象路径
      * @param sources          分片源文件
      * @param bos              bos里面包含要上传的字节流
-     * @return 返回一个新的ByteArrayOutputStream
      */
-    @NotNull
-    private ByteArrayOutputStream uploadMultipart(String targetObjectPath, List<MinIOComposeDTO> sources,
-                                                  ByteArrayOutputStream bos) {
+    private void uploadMultipart(String targetObjectPath, List<MinIOComposeDTO> sources,
+                                 ByteArrayOutputStream bos) {
         String chunkName = targetObjectPath + UUIDUtil.get();
 
         ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
@@ -151,8 +148,7 @@ public class MinioDecompressUtil {
                 .setObject(chunkName);
         sources.add(minIOComposeDTO);
 
-        bos = new ByteArrayOutputStream();
-        return bos;
+        bos.reset();
     }
 
 }
